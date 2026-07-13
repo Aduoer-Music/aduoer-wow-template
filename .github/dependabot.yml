@@ -1,0 +1,12 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    allow:
+      - dependency-name: aduoer-wow-sdk
+    groups:
+      wow-sdk:
+        patterns:
+          - aduoer-wow-sdk

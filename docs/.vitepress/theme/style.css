@@ -1,0 +1,9 @@
+.scalar-reference {
+  min-height: 75vh;
+}
+
+.api-reference-page .VPDoc .container,
+.api-reference-page .VPDoc .content,
+.api-reference-page .VPDoc .content-container {
+  max-width: none;
+}
