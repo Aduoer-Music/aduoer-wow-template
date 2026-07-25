@@ -1,16 +1,15 @@
 # Aduoer Wow 音乐源模板
 
 [![CI](https://github.com/Aduoer-Music/aduoer-wow-template/actions/workflows/ci.yml/badge.svg)](https://github.com/Aduoer-Music/aduoer-wow-template/actions/workflows/ci.yml)
-[![Documentation](https://github.com/Aduoer-Music/aduoer-wow-template/actions/workflows/docs.yml/badge.svg)](https://github.com/Aduoer-Music/aduoer-wow-template/actions/workflows/docs.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 这是 Aduoer Wow 的官方音乐源项目模板。你只需要连接目标音乐平台并完成数据转换，即可得到一个能被 Wow 客户端使用的音乐源服务。
 
-模板已经准备好 Node.js 服务、鉴权、测试、OpenAPI 文档和 Docker 构建；协议路由、请求参数、响应模型、运行时校验与能力检测由 [`aduoer-wow-sdk`](https://github.com/Aduoer-Music/aduoer-wow-sdk) 统一提供。
+模板已经准备好 Node.js 服务、鉴权、测试和 Docker 构建；协议路由、请求参数、响应模型、运行时校验、能力检测与 OpenAPI 由 [`aduoer-wow-sdk`](https://github.com/Aduoer-Music/aduoer-wow-sdk) 统一提供。
 
 > 本仓库用于创建新项目，不是需要持续合并的上游框架。项目创建后，通过 npm 升级 `aduoer-wow-sdk` 即可获得后续协议更新。
 
-[阅读完整开发文档](https://aduoer-music.github.io/aduoer-wow-template/)
+[阅读完整开发文档](https://aduoer-music.github.io/aduoer-docs/development/)
 
 ## 快速开始
 
@@ -83,7 +82,7 @@ Adapter 必须返回 SDK 定义的模型，不要直接透传上游平台的原�
 - 未实现的接口会返回统一的 `501` 响应。
 - 路由、参数解析、错误格式和响应封装无需在项目中重复实现。
 
-完整的方法和字段定义以 [`aduoer-wow-sdk`](https://github.com/Aduoer-Music/aduoer-wow-sdk) 及项目的 [API Reference](https://aduoer-music.github.io/aduoer-wow-template/api-reference) 为准。
+完整的方法和字段定义以 [`aduoer-wow-sdk`](https://github.com/Aduoer-Music/aduoer-wow-sdk) 及 [API Reference](https://aduoer-music.github.io/aduoer-docs/development/api-reference) 为准。
 
 ### 3. 验证改动
 
@@ -92,12 +91,6 @@ Adapter 必须返回 SDK 定义的模型，不要直接透传上游平台的原�
 ```bash
 npm test
 npm run build
-```
-
-如果改动影响协议文档，再运行：
-
-```bash
-npm run docs:build
 ```
 
 ## 模板负责什么
@@ -156,9 +149,7 @@ app.use(createWowRouter({
 │   ├── app.ts              # Express、鉴权与 Wow 路由配置
 │   └── server.ts           # 服务进程入口
 ├── tests/                  # 接口与应用测试
-├── docs/                   # VitePress 文档与 API Reference
-├── scripts/                # OpenAPI 同步脚本
-├── .github/                # CI、文档部署和依赖更新
+├── .github/                # CI 和依赖更新
 ├── Dockerfile              # 生产镜像构建
 └── AGENT.md                # 自动化开发代理的项目约定
 ```
@@ -171,9 +162,6 @@ app.use(createWowRouter({
 | `npm test` | 运行 Vitest 测试 |
 | `npm run build` | 将 TypeScript 编译到 `dist/` |
 | `npm start` | 启动已编译的生产服务 |
-| `npm run sync:openapi` | 将 SDK 的 OpenAPI 文件同步到文档目录 |
-| `npm run docs:dev` | 同步 OpenAPI 并启动本地文档站点 |
-| `npm run docs:build` | 同步 OpenAPI 并构建文档 |
 
 ## Docker 部署
 
@@ -202,8 +190,8 @@ npm run build
 
 ## 相关资源
 
-- [完整开发文档](https://aduoer-music.github.io/aduoer-wow-template/)
-- [交互式 API Reference](https://aduoer-music.github.io/aduoer-wow-template/api-reference)
+- [完整开发文档](https://aduoer-music.github.io/aduoer-docs/development/)
+- [交互式 API Reference](https://aduoer-music.github.io/aduoer-docs/development/api-reference)
 - [`aduoer-wow-sdk`](https://github.com/Aduoer-Music/aduoer-wow-sdk)
 
 ## 许可证

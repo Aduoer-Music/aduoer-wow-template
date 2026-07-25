@@ -13,10 +13,7 @@
     "build": "tsc -p tsconfig.build.json",
     "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
-    "test": "vitest run",
-    "sync:openapi": "node scripts/sync-openapi.mjs",
-    "docs:dev": "npm run sync:openapi && vitepress dev docs",
-    "docs:build": "npm run sync:openapi && vitepress build docs"
+    "test": "vitest run"
   },
   "dependencies": {
     "aduoer-wow-sdk": "^0.1.0",
@@ -24,16 +21,13 @@
     "express": "^5.1.0"
   },
   "devDependencies": {
-    "@scalar/api-reference": "^1.62.5",
     "@types/express": "^5.0.3",
     "@types/node": "^22.15.32",
     "@types/supertest": "^6.0.3",
     "supertest": "^7.1.1",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3",
-    "vitepress": "^1.6.4",
-    "vitest": "^3.2.4",
-    "vue": "^3.5.17"
+    "vitest": "^3.2.4"
   },
   "overrides": {
     "vite": "^7.3.6"

@@ -20,7 +20,6 @@
 - HTTP 服务：Express 5
 - 协议 SDK：`aduoer-wow-sdk`
 - 测试：Vitest + Supertest
-- 文档：VitePress + Scalar
 - 依赖管理：npm，必须同步维护 `package-lock.json`
 
 ## 代码结构与职责
@@ -31,8 +30,6 @@
 | `src/app.ts` | Express、中间件、鉴权上下文和 Wow Router | 保持应用装配职责，不放平台字段转换 |
 | `src/server.ts` | 进程入口、监听地址和信号处理 | 保持轻量，不放业务逻辑 |
 | `tests/` | HTTP 契约和行为测试 | 每次行为变更都应补充或更新测试 |
-| `docs/` | 使用指南和 API Reference 页面 | 面向使用者描述稳定行为 |
-| `scripts/sync-openapi.mjs` | 同步 SDK OpenAPI | 不手工维护同步后的生成文件 |
 | `Dockerfile` | 生产镜像 | 保持多阶段构建和非 root 运行 |
 
 ## 实现新音乐源的方法
@@ -96,14 +93,6 @@
 - 新增依赖前先确认标准库、现有依赖或 SDK 是否已经提供所需能力。
 - 更新依赖时同时提交 `package.json` 和 `package-lock.json`。
 
-## 文档规范
-
-- README 用于快速理解、启动和完成首次接入，避免堆叠协议细节。
-- `docs/` 用于完整、稳定的使用说明；行为变化应同步更新相关页面。
-- API 字段和路由以 SDK 生成的 OpenAPI 为准，不在 Markdown 中维护另一份完整定义。
-- `docs/public/openapi.json` 是 `npm run sync:openapi` 生成的文件，不要手工编辑或提交。
-- 示例不得包含真实平台凭据、真实用户数据或不可公开的接口参数。
-
 ## 安全与运行约束
 
 - 绝不提交 `.env`、token、cookie、密码、私钥或平台账号信息。
@@ -131,8 +120,6 @@ npm install          # 安装依赖
 npm run dev          # 启动开发服务
 npm test             # 运行测试
 npm run build        # TypeScript 生产构建
-npm run docs:dev     # 启动本地文档
-npm run docs:build   # 构建文档
 ```
 
 不要用 `npm start` 验证未构建的源码；它只运行 `dist/server.js`。
@@ -144,6 +131,5 @@ npm run docs:build   # 构建文档
 1. 确认改动位于正确的职责边界，没有复制 SDK 能力。
 2. 运行 `npm test`。
 3. 运行 `npm run build`。
-4. 文档或协议相关改动再运行 `npm run docs:build`。
-5. 检查没有提交密钥、生成物、调试日志或无关文件。
-6. 在交付说明中列出行为变化、验证结果和仍存在的限制。
+4. 检查没有提交密钥、生成物、调试日志或无关文件。
+5. 在交付说明中列出行为变化、验证结果和仍存在的限制。
