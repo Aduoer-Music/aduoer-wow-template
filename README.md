@@ -1,27 +1,24 @@
-# Aduoer Wow Origin Template
+# Aduoer Wow 音乐源模板
 
 [![CI](https://github.com/Aduoer-Music/aduoer-wow-template/actions/workflows/ci.yml/badge.svg)](https://github.com/Aduoer-Music/aduoer-wow-template/actions/workflows/ci.yml)
 [![Documentation](https://github.com/Aduoer-Music/aduoer-wow-template/actions/workflows/docs.yml/badge.svg)](https://github.com/Aduoer-Music/aduoer-wow-template/actions/workflows/docs.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Aduoer Wow 音乐源的官方项目模板。它提供了可直接运行的 Node.js 服务、鉴权示例、测试、API 文档和 Docker 配置，让音乐源开发者只需关注目标平台的数据接入与模型转换。
+这是 Aduoer Wow 的官方音乐源项目模板。你只需要连接目标音乐平台并完成数据转换，即可得到一个能被 Wow 客户端使用的音乐源服务。
 
-路由、请求参数、响应模型、运行时校验、错误响应、能力检测和 OpenAPI 文档统一由 [`aduoer-wow-sdk`](https://github.com/Aduoer-Music/aduoer-wow-sdk) 维护。
+模板已经准备好 Node.js 服务、鉴权、测试、OpenAPI 文档和 Docker 构建；协议路由、请求参数、响应模型、运行时校验与能力检测由 [`aduoer-wow-sdk`](https://github.com/Aduoer-Music/aduoer-wow-sdk) 统一提供。
 
-完整文档：<https://aduoer-music.github.io/aduoer-wow-template/>
+> 本仓库用于创建新项目，不是需要持续合并的上游框架。项目创建后，通过 npm 升级 `aduoer-wow-sdk` 即可获得后续协议更新。
 
-## 特性
+[阅读完整开发文档](https://aduoer-music.github.io/aduoer-wow-template/)
 
-- 使用 TypeScript 和 Express，要求 Node.js 22 或更高版本。
-- 通过 `WowAdapter` 按需实现平台能力，未实现的接口自动返回标准 `501` 响应。
-- 根据 Adapter 已实现的方法自动生成 `capabilities`，无需维护重复的能力清单。
-- SDK 内置 `/v1` 协议路由、类型定义、响应封装和运行时 Schema 校验。
-- SDK 内置 OpenAPI 3.1 文档，项目使用 VitePress 和 Scalar 发布完整开发文档。
-- 包含 Vitest、GitHub Actions、Dependabot 和多阶段 Docker 构建配置。
+## 快速开始
 
-## 创建音乐源项目
+### 1. 创建并启动项目
 
-在 GitHub 打开本仓库，点击 **Use this template** 创建自己的仓库，然后执行：
+需要 Node.js 22 或更高版本。
+
+在 GitHub 中点击 **Use this template** 创建自己的仓库，然后执行：
 
 ```bash
 git clone https://github.com/<your-account>/<your-origin>.git
@@ -31,18 +28,26 @@ cp .env.example .env
 npm run dev
 ```
 
-服务默认监听 `http://localhost:3000`。使用 `.env` 中配置的 token 验证服务与客户端接口：
+服务默认监听 `http://localhost:3000`。`.env.example` 中的默认 token 为 `change-me`，可以用下面的命令确认服务已经正常运行：
 
 ```bash
+# 无需鉴权的服务健康检查
 curl http://localhost:3000/status
+
+# Wow 客户端接口，需要 Authorization
 curl -H 'Authorization: change-me' http://localhost:3000/v1/status
 ```
 
-`GET /status` 是无需鉴权的服务健康检查；所有 Wow 客户端接口均位于 `/v1/*`，并通过 `Authorization` 请求头鉴权。
+### 2. 接入目标音乐平台
 
-## 实现平台 Adapter
+主要工作在 [`src/adapter.ts`](src/adapter.ts) 中完成：
 
-编辑 [`src/adapter.ts`](src/adapter.ts)，将示例数据替换为目标音乐平台的请求和模型转换。只实现平台实际支持的方法即可：
+1. 调用目标平台的 API。
+2. 将平台响应转换成 SDK 导出的标准模型。
+3. 只实现平台真正支持的能力。
+4. 为新增能力补充测试。
+
+下面是一个简化的歌曲详情实现：
 
 ```ts
 import type { WowAdapter } from 'aduoer-wow-sdk';
@@ -70,13 +75,48 @@ export const adapter: WowAdapter = {
 };
 ```
 
-Adapter 应返回 SDK 导出的标准模型，不要直接暴露上游平台的原始响应。SDK 会在开发和测试环境中校验返回值；不符合协议时，响应会包含具体的 Schema 路径，便于定位字段问题。
+Adapter 必须返回 SDK 定义的模型，不要直接透传上游平台的原始响应。在开发和测试环境中，SDK 会校验 Adapter 返回值；字段不符合协议时，错误信息会指出具体的 Schema 路径。
 
-常用能力包括歌曲详情与播放地址、歌词、歌单、排行榜、搜索、艺人、专辑、收藏、每日推荐和私人 FM。完整的 `WowAdapter` 方法及字段定义以 [aduoer-wow-sdk](https://github.com/Aduoer-Music/aduoer-wow-sdk) 为准。
+`WowAdapter` 的方法都是按能力选配的：
 
-## 自定义鉴权与账号上下文
+- 已实现的方法会自动出现在 `/v1/status` 的 `capabilities` 中。
+- 未实现的接口会返回统一的 `501` 响应。
+- 路由、参数解析、错误格式和响应封装无需在项目中重复实现。
 
-[`src/app.ts`](src/app.ts) 默认使用单一的 `WOW_API_TOKEN`。如果音乐源需要支持多个账号，可以在 `resolveContext` 中根据 token 查找账号，并为每次请求返回对应的 Adapter 和音质配置：
+完整的方法和字段定义以 [`aduoer-wow-sdk`](https://github.com/Aduoer-Music/aduoer-wow-sdk) 及项目的 [API Reference](https://aduoer-music.github.io/aduoer-wow-template/api-reference) 为准。
+
+### 3. 验证改动
+
+提交代码前至少运行：
+
+```bash
+npm test
+npm run build
+```
+
+如果改动影响协议文档，再运行：
+
+```bash
+npm run docs:build
+```
+
+## 模板负责什么
+
+| 模块 | 负责内容 |
+| --- | --- |
+| `aduoer-wow-sdk` | `/v1` 路由、协议类型、运行时校验、标准响应、能力检测和 OpenAPI |
+| `src/adapter.ts` | 目标音乐平台请求、字段转换和业务能力实现 |
+| `src/app.ts` | Express 配置、鉴权、账号上下文、CORS 和公开端点 |
+| `src/server.ts` | 环境变量读取、服务监听和优雅退出 |
+| `tests/` | Adapter 与 HTTP 行为的回归测试 |
+
+复杂的音乐源可以增加 `clients/`、`mappers/`、`services/` 等目录，但应继续保持“平台接入”和“Wow 协议”之间的边界，不要复制 SDK 内部的路由或响应模型。
+
+## 鉴权与多账号
+
+模板默认使用单一的 `WOW_API_TOKEN`。所有 `/v1/*` 请求都通过 `Authorization` 请求头鉴权；`GET /status` 是公开的服务健康检查。
+
+如果音乐源需要支持多个账号，可以在 [`src/app.ts`](src/app.ts) 的 `resolveContext` 中解析 token，并为每次请求返回对应的 Adapter：
 
 ```ts
 app.use(createWowRouter({
@@ -93,7 +133,7 @@ app.use(createWowRouter({
 }));
 ```
 
-`createWowRouter()` 返回的路由已经包含 `/v1` 前缀，应用应直接挂载。返回 `null` 表示鉴权失败，SDK 会生成统一的 `401` 响应。
+`createWowRouter()` 已经包含 `/v1` 前缀，应直接挂载。`resolveContext` 返回 `null` 时，SDK 会生成统一的 `401` 响应。
 
 ## 环境变量
 
@@ -105,7 +145,7 @@ app.use(createWowRouter({
 | `CORS_ALLOW_ORIGIN` | `*` | 允许访问服务的 Origin |
 | `NODE_ENV` | 无 | 设为 `production` 时默认不公开 `/openapi.json` |
 
-请勿将 `.env`、平台 cookie、访问令牌或其他凭据提交到仓库。
+不要将 `.env`、平台 cookie、访问令牌或其他凭据提交到仓库。生产环境应使用部署平台的 Secret 管理能力注入敏感配置。
 
 ## 项目结构
 
@@ -116,31 +156,24 @@ app.use(createWowRouter({
 │   ├── app.ts              # Express、鉴权与 Wow 路由配置
 │   └── server.ts           # 服务进程入口
 ├── tests/                  # 接口与应用测试
-├── docs/                   # VitePress 文档和 API Reference
-├── scripts/                # 文档构建使用的 OpenAPI 同步脚本
+├── docs/                   # VitePress 文档与 API Reference
+├── scripts/                # OpenAPI 同步脚本
+├── .github/                # CI、文档部署和依赖更新
 ├── Dockerfile              # 生产镜像构建
-└── .github/                # CI、文档部署和依赖更新配置
+└── AGENT.md                # 自动化开发代理的项目约定
 ```
-
-复杂平台可以继续拆分 `clients/`、`mappers/`、`services/` 等业务目录，但不需要复制或修改 SDK 内部的路由和响应模型。
 
 ## 常用命令
 
-| 命令 | 说明 |
+| 命令 | 用途 |
 | --- | --- |
 | `npm run dev` | 监听源码变更并启动开发服务 |
-| `npm run build` | 编译生产代码到 `dist/` |
-| `npm start` | 启动已编译的生产服务 |
 | `npm test` | 运行 Vitest 测试 |
-| `npm run docs:dev` | 同步 SDK OpenAPI 并启动本地文档站点 |
-| `npm run docs:build` | 同步 SDK OpenAPI 并构建完整文档 |
-
-提交代码前建议运行：
-
-```bash
-npm test
-npm run build
-```
+| `npm run build` | 将 TypeScript 编译到 `dist/` |
+| `npm start` | 启动已编译的生产服务 |
+| `npm run sync:openapi` | 将 SDK 的 OpenAPI 文件同步到文档目录 |
+| `npm run docs:dev` | 同步 OpenAPI 并启动本地文档站点 |
+| `npm run docs:build` | 同步 OpenAPI 并构建文档 |
 
 ## Docker 部署
 
@@ -152,11 +185,11 @@ docker run --rm \
   my-wow-origin
 ```
 
-生产镜像基于 Node.js 22 Alpine，并使用非 root 用户运行。平台账号等需要持久化的数据应使用数据库或单独挂载的存储卷管理。
+生产镜像基于 Node.js 22 Alpine，并以非 root 用户运行。模板本身不持久化账号信息；数据库、缓存或其他持久化目录需要由部署环境单独提供。
 
 ## 升级 SDK
 
-模板用于创建项目的初始结构，后续协议和类型更新通过 npm 获取，无需持续合并本仓库：
+协议和类型更新通过 npm 获取：
 
 ```bash
 npm outdated aduoer-wow-sdk
@@ -165,12 +198,13 @@ npm test
 npm run build
 ```
 
-SDK 遵循语义化版本。升级前请阅读对应的 Release 或 Changelog，并在合并依赖更新前确认完整检查通过。
+升级前请阅读 SDK 的 Release 或 Changelog。依赖升级后应检查类型错误、协议模型变化和能力检测结果，再合并 lockfile。
 
-## 相关项目
+## 相关资源
 
 - [完整开发文档](https://aduoer-music.github.io/aduoer-wow-template/)
-- [aduoer-wow-sdk](https://github.com/Aduoer-Music/aduoer-wow-sdk)
+- [交互式 API Reference](https://aduoer-music.github.io/aduoer-wow-template/api-reference)
+- [`aduoer-wow-sdk`](https://github.com/Aduoer-Music/aduoer-wow-sdk)
 
 ## 许可证
 
