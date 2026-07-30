@@ -33,12 +33,11 @@ export const adapter: WowAdapter = {
     };
   },
 
-  async getTrackLyric() {
+  async getTrackLyrics() {
     return {
-      lyric: '[00:00.00]Hello Wow',
-      wordLyric: '',
-      translateLyric: '',
-      translateWordLyric: ''
+      lyrics: '[00:00.00]Hello Wow',
+      wordLyrics: '',
+      translatedLyrics: ''
     };
   },
 

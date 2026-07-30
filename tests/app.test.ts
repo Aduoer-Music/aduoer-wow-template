@@ -30,6 +30,28 @@ describe('Wow template', () => {
     expect(response.body.data.id).toBe('hello');
   });
 
+  it('示例 Adapter 返回复数命名的歌词字段', async () => {
+    const response = await request(app)
+      .get('/v1/track/lyrics?id=hello')
+      .set('Authorization', 'test-token')
+      .expect(200);
+
+    expect(response.body.data).toEqual({
+      lyrics: '[00:00.00]Hello Wow',
+      wordLyrics: '',
+      translatedLyrics: ''
+    });
+  });
+
+  it('旧歌词地址重定向到新地址', async () => {
+    const response = await request(app)
+      .get('/v1/track/lyric?id=hello')
+      .set('Authorization', 'test-token')
+      .expect(308);
+
+    expect(response.headers.location).toBe('/v1/track/lyrics?id=hello');
+  });
+
   it('公开 SDK OpenAPI', async () => {
     const response = await request(app).get('/openapi.json').expect(200);
     expect(response.body.info.version).toBe(sdkVersion);
