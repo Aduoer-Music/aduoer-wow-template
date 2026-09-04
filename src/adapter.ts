@@ -19,6 +19,10 @@ const demoTrack: Track = {
  * 未实现的方法无需声明，SDK 会从实现自动生成 capabilities，并返回 501。
  */
 export const adapter: WowAdapter = {
+  async getTrackRoam() {
+    return [demoTrack];
+  },
+
   async getTrackDetail(id) {
     return { ...demoTrack, id };
   },

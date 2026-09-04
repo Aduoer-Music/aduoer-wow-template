@@ -30,6 +30,29 @@ describe('Wow template', () => {
     expect(response.body.data.id).toBe('hello');
   });
 
+  it('示例 Adapter 提供歌曲漫游能力', async () => {
+    const status = await request(app)
+      .get('/v1/status')
+      .set('Authorization', 'test-token')
+      .expect(200);
+    expect(status.body.data.capabilities).toContain('trackRoam');
+
+    const response = await request(app)
+      .get('/v1/track/roam')
+      .set('Authorization', 'test-token')
+      .expect(200);
+    expect(response.body.data).toEqual([expect.objectContaining({ id: 'demo-track' })]);
+  });
+
+  it('旧版歌曲漫游地址重定向到新地址', async () => {
+    const response = await request(app)
+      .get('/v1/track/fm')
+      .set('Authorization', 'test-token')
+      .expect(308);
+
+    expect(response.headers.location).toBe('/v1/track/roam');
+  });
+
   it('示例 Adapter 返回复数命名的歌词字段', async () => {
     const response = await request(app)
       .get('/v1/track/lyrics?id=hello')
