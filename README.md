@@ -9,7 +9,7 @@
 
 > 本仓库用于创建新项目，不是需要持续合并的上游框架。项目创建后，通过 npm 升级 `aduoer-wow-sdk` 即可获得后续协议更新。
 
-[阅读完整开发文档](https://aduoer-music.github.io/docs/development/)
+[阅读完整开发文档](https://docs.aduoer.waizx.com/development/guide/getting-started)
 
 ## 快速开始
 
@@ -192,8 +192,8 @@ npm run build
 
 ## 相关资源
 
-- [完整开发文档](https://aduoer-music.github.io/docs/development/)
-- [交互式 API Reference](https://aduoer-music.github.io/docs/development/api-reference)
+- [完整开发文档](https://docs.aduoer.waizx.com/development/guide/getting-started)
+- [交互式 API Reference](https://docs.aduoer.waizx.com/development/api-reference)
 - [`aduoer-wow-sdk`](https://github.com/Aduoer-Music/aduoer-wow-sdk)
 
 ## 许可证
