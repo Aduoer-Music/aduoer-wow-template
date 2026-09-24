@@ -19,6 +19,34 @@ const demoTrack: Track = {
  * 未实现的方法无需声明，SDK 会从实现自动生成 capabilities，并返回 501。
  */
 export const adapter: WowAdapter = {
+  async getPlaylistDetail(id, trackLimit = -1, sort, order) {
+    const tracks = [
+      demoTrack,
+      {
+        ...demoTrack,
+        id: 'another-track',
+        title: 'Another Track',
+        artists: [{ id: 'another-artist', name: 'Another Developer' }]
+      }
+    ];
+    if (sort === 'title' || sort === 'artist') {
+      tracks.sort((left, right) => {
+        const leftValue = sort === 'title' ? left.title : left.artists[0]?.name ?? '';
+        const rightValue = sort === 'title' ? right.title : right.artists[0]?.name ?? '';
+        const comparison = leftValue.localeCompare(rightValue);
+        return order === 'desc' ? -comparison : comparison;
+      });
+    }
+    return {
+      id,
+      name: '示例歌单',
+      description: '',
+      coverUrl: 'https://placehold.co/600x600/png',
+      trackCount: tracks.length,
+      tracks: trackLimit < 0 ? tracks : tracks.slice(0, trackLimit)
+    };
+  },
+
   async getTrackRoam() {
     return [demoTrack];
   },
