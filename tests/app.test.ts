@@ -30,6 +30,31 @@ describe('Wow template', () => {
     expect(response.body.data.id).toBe('hello');
   });
 
+  it('歌单排序选项与排序参数保持一致', async () => {
+    const status = await request(app).get('/v1/status').set('Authorization', 'test-token').expect(200);
+    expect(status.body.data.playlistSortOptions).toEqual([
+      { key: 'title', label: 'Track' },
+      { key: 'artist', label: '艺人' }
+    ]);
+    const detail = await request(app)
+      .get('/v1/playlist/detail?id=demo&sort=title&order=desc')
+      .set('Authorization', 'test-token')
+      .expect(200);
+    expect(detail.body.data.tracks.map((item: { title: string }) => item.title)).toEqual(['Hello Wow', 'Another Track']);
+
+    const byArtist = await request(app)
+      .get('/v1/playlist/detail?id=demo&sort=artist&order=asc')
+      .set('Authorization', 'test-token')
+      .expect(200);
+    expect(byArtist.body.data.tracks.map((item: { title: string }) => item.title)).toEqual(['Another Track', 'Hello Wow']);
+
+    const original = await request(app)
+      .get('/v1/playlist/detail?id=demo')
+      .set('Authorization', 'test-token')
+      .expect(200);
+    expect(original.body.data.tracks.map((item: { title: string }) => item.title)).toEqual(['Hello Wow', 'Another Track']);
+  });
+
   it('示例 Adapter 提供歌曲漫游能力', async () => {
     const status = await request(app)
       .get('/v1/status')

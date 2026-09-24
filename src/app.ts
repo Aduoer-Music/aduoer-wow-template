@@ -38,7 +38,11 @@ export function createApp(options: AppOptions = {}): Express {
       if (!apiToken || authorization !== apiToken) return null;
       return {
         adapter,
-        qualityMap: [{ key: 'standard', label: '标准音质' }]
+        qualityMap: [{ key: 'standard', label: '标准音质' }],
+        playlistSortOptions: [
+          { key: 'title', label: 'Track' },
+          { key: 'artist', label: '艺人' }
+        ]
       };
     }
   }));

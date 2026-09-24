@@ -84,6 +84,8 @@ Adapter 必须返回 SDK 定义的模型，不要直接透传上游平台的原�
 
 完整的方法和字段定义以 [`aduoer-wow-sdk`](https://github.com/Aduoer-Music/aduoer-wow-sdk) 及 [API Reference](https://aduoer-music.github.io/docs/development/api-reference) 为准。
 
+歌单歌曲排序由源实现。`src/app.ts` 的 `playlistSortOptions` 声明可选的 `key` 和用户可见 `label`；`src/adapter.ts` 的 `getPlaylistDetail(id, trackLimit, sort, order)` 接收客户端选择。未选择排序时 `sort`、`order` 均为 `undefined`，应保留目标平台的歌单原始顺序。
+
 ### 3. 验证改动
 
 提交代码前至少运行：
