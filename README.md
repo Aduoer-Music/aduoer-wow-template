@@ -78,13 +78,30 @@ Adapter 必须返回 SDK 定义的模型，不要直接透传上游平台的原�
 
 `WowAdapter` 的方法都是按能力选配的：
 
-- 已实现的方法会自动出现在 `/v1/status` 的 `capabilities` 中。
+- 可选扩展能力由 SDK 根据方法实现自动生成 `/v1/status` 的 `capabilities`；基础接口不参与能力声明。
 - 未实现的接口会返回统一的 `501` 响应。
 - 路由、参数解析、错误格式和响应封装无需在项目中重复实现。
 
 完整的方法和字段定义以 [`aduoer-wow-sdk`](https://github.com/Aduoer-Music/aduoer-wow-sdk) 及 [API Reference](https://aduoer-music.github.io/docs/development/api-reference) 为准。
 
 歌单歌曲排序由源实现。`src/app.ts` 的 `playlistSortOptions` 声明可选的 `key` 和用户可见 `label`；`src/adapter.ts` 的 `getPlaylistDetail(id, trackLimit, sort, order)` 接收客户端选择。未选择排序时 `sort`、`order` 均为 `undefined`，应保留目标平台的歌单原始顺序。
+
+#### 艺人和专辑收藏
+
+模板依赖 SDK `^0.3.1`，包含以下基础接口：
+
+| 路由 | Adapter 方法 | 返回值 |
+| --- | --- | --- |
+| `POST /v1/artist/favorite` | `favoriteArtist(id, status)` | `MutationStatus` |
+| `POST /v1/album/favorite` | `favoriteAlbum(id, status)` | `MutationStatus` |
+| `GET /v1/user/artist/list` | `userArtists()` | `Artist[]` |
+| `GET /v1/user/album/list` | `userAlbums()` | `Album[]` |
+
+这四个方法无需 capability 声明，也不应按 capability 隐藏入口。平台支持时连接真实接口；未实现时省略方法，由 SDK 返回统一的 `501`，不要返回成功状态或空列表伪装支持。
+
+收藏写入请求体为 `{ id, status }`，其中 `status` 为布尔值；仅在上游确认成功后返回成功的 `MutationStatus`。列表返回当前账号的完整收藏内容，艺人和专辑的列表及详情可通过 `favorite` 表达收藏状态。
+
+这些路由沿用有状态用户数据规则；无状态源的用户收藏由 Aduoer 客户端维护。
 
 ### 3. 验证改动
 

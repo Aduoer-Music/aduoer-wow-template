@@ -16,7 +16,8 @@ const demoTrack: Track = {
 
 /**
  * 示例 Adapter。开发自己的源时，将这里的方法连接到目标音乐服务；
- * 未实现的方法无需声明，SDK 会从实现自动生成 capabilities，并返回 501。
+ * 未实现的方法无需声明，调用时由 SDK 返回 501。
+ * SDK 从扩展方法推断 capabilities；艺人、专辑收藏等基础接口不参与能力声明。
  */
 export const adapter: WowAdapter = {
   async getPlaylistDetail(id, trackLimit = -1, sort, order) {

@@ -104,5 +104,9 @@ describe('Wow template', () => {
     const response = await request(app).get('/openapi.json').expect(200);
     expect(response.body.info.version).toBe(sdkVersion);
     expect(response.body.paths).toHaveProperty('/v1/status');
+    expect(response.body.paths['/v1/artist/favorite']).toHaveProperty('post');
+    expect(response.body.paths['/v1/album/favorite']).toHaveProperty('post');
+    expect(response.body.paths['/v1/user/artist/list']).toHaveProperty('get');
+    expect(response.body.paths['/v1/user/album/list']).toHaveProperty('get');
   });
 });
