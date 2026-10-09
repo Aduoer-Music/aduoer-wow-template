@@ -48,7 +48,7 @@ export const adapter: WowAdapter = {
     };
   },
 
-  async getTrackRoam() {
+  async getRoamTracks() {
     return [demoTrack];
   },
 

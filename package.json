@@ -16,7 +16,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "aduoer-wow-sdk": "^0.3.1",
+    "aduoer-wow-sdk": "^0.3.2",
     "dotenv": "^17.2.0",
     "express": "^5.1.0"
   },

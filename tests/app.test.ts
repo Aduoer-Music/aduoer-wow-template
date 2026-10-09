@@ -60,7 +60,8 @@ describe('Wow template', () => {
       .get('/v1/status')
       .set('Authorization', 'test-token')
       .expect(200);
-    expect(status.body.data.capabilities).toContain('trackRoam');
+    expect(status.body.data.capabilities).toContain('roamTracks');
+    expect(status.body.data.capabilities).not.toContain('trackRoam');
 
     const response = await request(app)
       .get('/v1/track/roam')

@@ -86,9 +86,11 @@ Adapter 必须返回 SDK 定义的模型，不要直接透传上游平台的原�
 
 歌单歌曲排序由源实现。`src/app.ts` 的 `playlistSortOptions` 声明可选的 `key` 和用户可见 `label`；`src/adapter.ts` 的 `getPlaylistDetail(id, trackLimit, sort, order)` 接收客户端选择。未选择排序时 `sort`、`order` 均为 `undefined`，应保留目标平台的歌单原始顺序。
 
+歌曲漫游实现 `getRoamTracks()`，SDK 会声明 `roamTracks` 能力；HTTP 接口仍为 `GET /v1/track/roam`，与每日推荐的 `dailyTracks` 采用一致的能力命名
+
 #### 艺人和专辑收藏
 
-模板依赖 SDK `^0.3.1`，包含以下基础接口：
+模板依赖 SDK `^0.3.2`，包含以下基础接口：
 
 | 路由 | Adapter 方法 | 返回值 |
 | --- | --- | --- |
