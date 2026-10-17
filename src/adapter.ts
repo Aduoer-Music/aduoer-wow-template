@@ -1,5 +1,6 @@
 import type { Track, WowAdapter } from 'aduoer-wow-sdk';
 
+// 单来源不提供 fromLabel；多来源时按条目设置，建议不超过 10 字符，示例：fromLabel: '来源 A'
 const demoTrack: Track = {
   id: 'demo-track',
   title: 'Hello Wow',

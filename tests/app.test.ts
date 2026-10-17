@@ -28,6 +28,9 @@ describe('Wow template', () => {
       .expect(200);
 
     expect(response.body.data.id).toBe('hello');
+    expect(response.body.data).not.toHaveProperty('fromLabel');
+    expect(response.body.data.artists[0]).not.toHaveProperty('fromLabel');
+    expect(response.body.data.album).not.toHaveProperty('fromLabel');
   });
 
   it('歌单排序选项与排序参数保持一致', async () => {
