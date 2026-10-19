@@ -44,7 +44,7 @@ export const adapter: WowAdapter = {
       name: '示例歌单',
       description: '',
       coverUrl: 'https://placehold.co/600x600/png',
-      trackCount: tracks.length,
+      trackCount: tracks.length, favorite: false,
       tracks: trackLimit < 0 ? tracks : tracks.slice(0, trackLimit)
     };
   },
